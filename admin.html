@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="color-scheme" content="light dark">
+<title>Painel Poderosa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#f5f2f4; --surface:#ffffff; --surface2:#faf7f9; --line:#e8e1e5; --line2:#d6cbd1;
+    --text:#1f171c; --muted:#6f6169; --accent:#d81b60; --accent-h:#bd1553; --accent-ink:#fff;
+    --shadow:0 1px 2px rgba(40,20,32,.06);
+    --c-aguardando:#d9a21b; --c-pago:#14a89a; --c-separando:#3b82f6; --c-enviado:#8b5cf6; --c-entregue:#22a35a; --c-cancelado:#e5484d;
+    --ok:#22a35a; --warn:#d9a21b; --bad:#e5484d;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:#100b0f; --surface:#181116; --surface2:#1e161c; --line:#2c2229; --line2:#3d3039;
+      --text:#f4edf1; --muted:#9d8e97; --accent:#ec407a; --accent-h:#f06292; --accent-ink:#fff;
+      --shadow:none;
+    }
+  }
+  * { box-sizing:border-box; }
+  html { -webkit-text-size-adjust:100%; }
+  body { margin:0; background:var(--bg); color:var(--text); font:14px/1.5 Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; font-variant-numeric:tabular-nums; -webkit-font-smoothing:antialiased; }
+  button { font:inherit; color:inherit; cursor:pointer; }
+  svg.i { width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; flex:none; }
+  :focus-visible { outline:2px solid var(--accent); outline-offset:2px; border-radius:6px; }
+  .hide { display:none !important; }
+  .muted { color:var(--muted); }
+
+  /* ---------- botões ---------- */
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:7px; height:36px; padding:0 14px; border-radius:8px; border:1px solid var(--line2); background:var(--surface); font-weight:600; font-size:13px; transition:background .15s, border-color .15s; white-space:nowrap; }
+  .btn:hover { background:var(--surface2); border-color:var(--muted); }
+  .btn.primary { background:var(--accent); border-color:var(--accent); color:var(--accent-ink); }
+  .btn.primary:hover { background:var(--accent-h); border-color:var(--accent-h); }
+  .btn.success { background:var(--ok); border-color:var(--ok); color:#fff; }
+  .btn.success:hover { filter:brightness(1.08); }
+  .btn.danger { color:var(--bad); border-color:transparent; background:transparent; }
+  .btn.danger:hover { background:color-mix(in srgb, var(--bad) 12%, transparent); border-color:transparent; }
+  .btn.danger-solid { background:var(--bad); border-color:var(--bad); color:#fff; }
+  .btn.sm { height:32px; padding:0 10px; }
+  .btn.icon { width:32px; padding:0; }
+  .btn:disabled { opacity:.5; cursor:not-allowed; }
+  .btn.loading svg { animation:giro .8s linear infinite; }
+  @keyframes giro { to { transform:rotate(360deg); } }
+
+  input[type=text], input[type=password], input[type=number], input[type=search] {
+    width:100%; height:38px; padding:0 12px; border-radius:8px; border:1px solid var(--line2); background:var(--surface); color:var(--text); font:inherit;
+  }
+  input::placeholder { color:var(--muted); }
+  input:focus { outline:2px solid color-mix(in srgb, var(--accent) 55%, transparent); outline-offset:0; border-color:var(--accent); }
+
+  /* ---------- login ---------- */
+  .login-wrap { min-height:100vh; display:grid; place-items:center; padding:20px; }
+  .login { width:100%; max-width:380px; background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:28px; box-shadow:var(--shadow); }
+  .login h1 { font-size:20px; margin:16px 0 6px; letter-spacing:-.01em; }
+  .login p { margin:0 0 18px; color:var(--muted); font-size:13px; }
+  .login code { background:var(--surface2); border:1px solid var(--line); padding:1px 6px; border-radius:5px; font-size:12px; }
+  .mark { width:38px; height:38px; border-radius:10px; display:grid; place-items:center; color:#fff; background:linear-gradient(145deg,#f0457f,#b3124a); }
+  .mark svg { width:20px; height:20px; }
+
+  /* ---------- estrutura ---------- */
+  .shell { display:grid; grid-template-columns:232px minmax(0,1fr); min-height:100vh; }
+  aside { position:sticky; top:0; height:100vh; display:flex; flex-direction:column; gap:22px; padding:18px 14px; background:var(--surface); border-right:1px solid var(--line); }
+  .brand { display:flex; align-items:center; gap:10px; padding:0 6px; font-weight:700; font-size:15px; letter-spacing:-.01em; }
+  .brand .mark { width:32px; height:32px; border-radius:9px; }
+  .brand .mark svg { width:17px; height:17px; }
+  nav { display:flex; flex-direction:column; gap:2px; }
+  .nav { display:flex; align-items:center; gap:10px; width:100%; height:38px; padding:0 10px; border:0; border-radius:8px; background:transparent; color:var(--muted); font-weight:500; text-align:left; }
+  .nav:hover { background:var(--surface2); color:var(--text); }
+  .nav.on { background:color-mix(in srgb, var(--accent) 13%, transparent); color:var(--accent); font-weight:600; }
+  .nav .count { margin-left:auto; min-width:20px; height:20px; padding:0 6px; border-radius:10px; background:var(--accent); color:var(--accent-ink); font-size:11px; font-weight:700; display:grid; place-items:center; }
+  .side-foot { margin-top:auto; display:flex; flex-direction:column; gap:10px; padding:0 4px; }
+  .live { display:flex; align-items:center; gap:8px; font-size:12px; color:var(--muted); padding:0 6px; }
+  .live i { width:8px; height:8px; border-radius:50%; background:var(--muted); }
+  .live.on i { background:var(--ok); box-shadow:0 0 0 3px color-mix(in srgb, var(--ok) 25%, transparent); }
+  .live.wait i { background:var(--warn); }
+
+  main { min-width:0; padding:28px 32px 60px; max-width:1180px; width:100%; }
+  .page-h { display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin-bottom:20px; flex-wrap:wrap; }
+  .page-h h2 { margin:0; font-size:22px; font-weight:700; letter-spacing:-.02em; }
+  .page-h p { margin:2px 0 0; color:var(--muted); font-size:13px; }
+
+  /* ---------- KPIs ---------- */
+  .kpis { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin-bottom:20px; }
+  .kpi { text-align:left; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:14px 16px; box-shadow:var(--shadow); }
+  button.kpi:hover { border-color:var(--line2); background:var(--surface2); }
+  .kpi .l { font-size:13px; color:var(--muted); }
+  .kpi .v { font-size:24px; font-weight:700; letter-spacing:-.02em; margin:2px 0; }
+  .kpi .s { font-size:12px; color:var(--muted); }
+
+  /* ---------- filtros ---------- */
+  .toolbar { display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap; margin-bottom:14px; }
+  .chips { display:flex; gap:6px; flex-wrap:wrap; }
+  .chip { --c:var(--muted); display:inline-flex; align-items:center; gap:7px; height:32px; padding:0 12px; border-radius:999px; border:1px solid var(--line); background:var(--surface); color:var(--muted); font-size:13px; font-weight:500; }
+  .chip:hover { border-color:var(--line2); color:var(--text); }
+  .chip i { width:8px; height:8px; border-radius:50%; background:var(--c); }
+  .chip b { font-weight:600; color:var(--text); }
+  .chip.zero { opacity:.55; }
+  .chip.on { background:var(--text); border-color:var(--text); color:var(--bg); opacity:1; }
+  .chip.on b { color:var(--bg); }
+  .search { position:relative; flex:1 1 100%; }
+  .search svg { position:absolute; left:11px; top:11px; color:var(--muted); width:16px; height:16px; }
+  .search input { padding-left:34px; }
+
+  .s-aguardando { --c:var(--c-aguardando); } .s-pago { --c:var(--c-pago); } .s-separando { --c:var(--c-separando); }
+  .s-enviado { --c:var(--c-enviado); } .s-entregue { --c:var(--c-entregue); } .s-cancelado { --c:var(--c-cancelado); }
+
+  /* ---------- pedidos ---------- */
+  .orders { display:flex; flex-direction:column; gap:10px; }
+  .order { background:var(--surface); border:1px solid var(--line); border-radius:12px; box-shadow:var(--shadow); overflow:hidden; }
+  .order.open { border-color:var(--line2); }
+  .orow { display:grid; grid-template-columns:150px minmax(0,1.3fr) minmax(0,1fr) 110px 175px 18px; align-items:center; gap:16px; width:100%; padding:14px 16px; background:transparent; border:0; text-align:left; }
+  .orow:hover { background:var(--surface2); }
+  .orow > span { min-width:0; }
+  .orow b { display:block; font-weight:600; }
+  .orow small { display:block; color:var(--muted); font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .orow .o-id b { font-size:14px; letter-spacing:-.01em; }
+  .orow .o-cli b, .orow .o-pay b { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-weight:500; }
+  .orow .o-tot { text-align:right; font-weight:700; font-size:15px; }
+  .orow .chev { color:var(--muted); transition:transform .2s; }
+  .order.open .chev { transform:rotate(180deg); }
+  .badge { display:inline-flex; white-space:nowrap; align-items:center; gap:6px; padding:3px 10px 3px 8px; border-radius:999px; font-size:12px; font-weight:600; background:color-mix(in srgb, var(--c, var(--muted)) 15%, transparent); color:color-mix(in srgb, var(--c, var(--muted)) 72%, var(--text)); width:max-content; max-width:100%; }
+  .badge::before { content:""; width:6px; height:6px; border-radius:50%; background:var(--c, var(--muted)); }
+  .order.acao { box-shadow:inset 3px 0 0 var(--c); }
+
+  .odet { display:none; border-top:1px solid var(--line); padding:18px 16px 16px; }
+  .order.open .odet { display:block; }
+  .steps { display:flex; list-style:none; margin:0 0 20px; padding:0; max-width:640px; }
+  .steps li { flex:1; position:relative; text-align:center; font-size:12px; color:var(--muted); padding-top:22px; }
+  .steps li::before { content:""; position:absolute; top:3px; left:50%; width:10px; height:10px; border-radius:50%; background:var(--line2); transform:translateX(-50%); z-index:1; }
+  .steps li::after { content:""; position:absolute; top:7px; left:-50%; width:100%; height:2px; background:var(--line2); }
+  .steps li:first-child::after { display:none; }
+  .steps li.done::before, .steps li.cur::before { background:var(--accent); }
+  .steps li.done::after, .steps li.cur::after { background:var(--accent); }
+  .steps li.cur { color:var(--text); font-weight:600; }
+  .steps li.cur::before { box-shadow:0 0 0 4px color-mix(in srgb, var(--accent) 25%, transparent); }
+  .cancelado-msg { display:flex; align-items:center; gap:8px; margin-bottom:18px; padding:9px 12px; border-radius:8px; font-size:13px; color:var(--bad); background:color-mix(in srgb, var(--bad) 10%, transparent); }
+
+  .cols { display:grid; grid-template-columns:1fr 1fr; gap:28px; }
+  .blk + .blk { margin-top:16px; }
+  .blk h4 { margin:0 0 4px; font-size:12px; font-weight:600; color:var(--muted); }
+  .blk p { margin:0; line-height:1.55; }
+  .blk p small { color:var(--muted); font-size:13px; }
+  .track { display:inline-block; font-weight:600; background:var(--surface2); border:1px solid var(--line); border-radius:6px; padding:2px 8px; }
+  .line { display:flex; justify-content:space-between; gap:12px; padding:7px 0; border-bottom:1px solid var(--line); }
+  .line.sub { color:var(--muted); font-size:13px; }
+  .line.disc b { color:var(--ok); }
+  .line.total { border-bottom:0; padding-top:10px; font-weight:700; font-size:15px; }
+  .line b { font-weight:600; white-space:nowrap; }
+  .acts { display:flex; gap:8px; flex-wrap:wrap; margin-top:18px; padding-top:14px; border-top:1px solid var(--line); }
+  .acts .gap { flex:1; }
+  .empty { text-align:center; color:var(--muted); padding:56px 0; background:var(--surface); border:1px dashed var(--line2); border-radius:12px; }
+
+  /* ---------- estoque ---------- */
+  .panel { background:var(--surface); border:1px solid var(--line); border-radius:12px; overflow:auto; box-shadow:var(--shadow); }
+  table { width:100%; border-collapse:collapse; min-width:560px; }
+  th { text-align:left; font-size:12px; font-weight:600; color:var(--muted); padding:11px 16px; background:var(--surface2); border-bottom:1px solid var(--line); }
+  td { padding:12px 16px; border-bottom:1px solid var(--line); vertical-align:middle; }
+  tr:last-child td { border-bottom:0; }
+  td.r, th.r { text-align:right; }
+  .qty { display:inline-flex; align-items:center; gap:6px; }
+  .qty input { width:64px; text-align:center; height:32px; padding:0 6px; -moz-appearance:textfield; }
+  .qty input::-webkit-outer-spin-button, .qty input::-webkit-inner-spin-button { -webkit-appearance:none; margin:0; }
+  .sit { display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:600; padding:3px 10px 3px 8px; border-radius:999px; background:color-mix(in srgb, var(--c) 15%, transparent); color:color-mix(in srgb, var(--c) 72%, var(--text)); }
+  .sit::before { content:""; width:6px; height:6px; border-radius:50%; background:var(--c); }
+  .sit.ok { --c:var(--ok); } .sit.baixo { --c:var(--warn); } .sit.zero { --c:var(--bad); }
+
+  /* ---------- modal e toast ---------- */
+  dialog { border:1px solid var(--line2); border-radius:14px; background:var(--surface); color:var(--text); padding:0; width:min(420px, 92vw); box-shadow:0 20px 60px rgba(0,0,0,.35); }
+  dialog::backdrop { background:rgba(8,4,7,.6); backdrop-filter:blur(2px); }
+  .dlg-b { padding:22px 22px 8px; }
+  .dlg-b h3 { margin:0 0 6px; font-size:16px; letter-spacing:-.01em; }
+  .dlg-b p { margin:0 0 14px; color:var(--muted); font-size:13px; }
+  .dlg-f { display:flex; justify-content:flex-end; gap:8px; padding:14px 22px 20px; }
+  #toasts { position:fixed; right:20px; bottom:20px; display:flex; flex-direction:column; gap:8px; z-index:50; }
+  .toast { display:flex; align-items:center; gap:10px; max-width:360px; padding:11px 14px; border-radius:10px; background:var(--text); color:var(--bg); font-size:13px; font-weight:500; box-shadow:0 8px 24px rgba(0,0,0,.3); animation:entra .2s ease-out; }
+  .toast.err { background:var(--bad); color:#fff; }
+  .toast svg { color:var(--ok); } .toast.err svg { color:#fff; }
+  @keyframes entra { from { opacity:0; transform:translateY(8px); } }
+
+  /* ---------- responsivo ---------- */
+  @media (max-width:1000px) { .kpis { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+  @media (max-width:860px) {
+    .shell { grid-template-columns:minmax(0,1fr); }
+    .side-foot .lbl { display:none; }
+    .side-foot .btn { width:32px; padding:0; }
+    aside { position:sticky; z-index:10; height:auto; flex-direction:row; align-items:center; gap:10px; padding:10px 14px; border-right:0; border-bottom:1px solid var(--line); }
+    nav { flex-direction:row; margin-left:6px; }
+    .nav { width:auto; padding:0 12px; }
+    .side-foot { margin:0 0 0 auto; flex-direction:row; align-items:center; }
+    .live span { display:none; }
+    main { padding:20px 16px 60px; }
+  }
+  @media (max-width:760px) {
+    .orow { grid-template-columns:1fr auto; grid-template-areas:"id tot" "cli badge" "pay chev"; gap:6px 12px; }
+    .o-id { grid-area:id; } .o-tot { grid-area:tot; } .o-cli { grid-area:cli; } .o-pay { grid-area:pay; } .orow .badge { grid-area:badge; justify-self:end; } .chev { grid-area:chev; justify-self:end; }
+    .cols { grid-template-columns:1fr; gap:18px; }
+    .steps li { font-size:11px; }
+  }
+  @media (max-width:520px) { .brand .nome { display:none; } aside { gap:6px; padding:10px 12px; } nav { margin-left:0; } .nav { padding:0 8px; gap:6px; } .nav > svg { display:none; } .side-foot { gap:8px; } .kpi .v { font-size:20px; } }
+  @media (prefers-reduced-motion:reduce) { * { animation:none !important; transition:none !important; } }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-package" viewBox="0 0 24 24"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></symbol>
+    <symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+    <symbol id="i-truck" viewBox="0 0 24 24"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></symbol>
+    <symbol id="i-printer" viewBox="0 0 24 24"><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6"/><rect x="6" y="14" width="12" height="8" rx="1"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+    <symbol id="i-chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+    <symbol id="i-list" viewBox="0 0 24 24"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M9 12h6"/><path d="M9 16h6"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></symbol>
+    <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+    <symbol id="i-ban" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/></symbol>
+  </defs>
+</svg>
+
+<!-- LOGIN -->
+<div id="telaLogin" class="login-wrap">
+  <div class="login">
+    <div class="mark"><svg class="i"><use href="#i-package"/></svg></div>
+    <h1>Painel Poderosa</h1>
+    <p>Cole o token de administrador que aparece no terminal ao rodar o <code>server.py</code>.</p>
+    <input id="tokenIn" type="password" placeholder="Token de administrador" autocomplete="off" aria-label="Token de administrador" onkeydown="if(event.key==='Enter')entrar()">
+    <button class="btn primary" style="width:100%;margin-top:12px;height:40px" onclick="entrar()"><svg class="i"><use href="#i-lock"/></svg>Entrar</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="telaApp" class="shell hide">
+  <aside>
+    <div class="brand"><div class="mark"><svg class="i"><use href="#i-package"/></svg></div><span class="nome">Poderosa</span></div>
+    <nav>
+      <button class="nav on" id="tabPed" onclick="aba('ped')"><svg class="i"><use href="#i-list"/></svg>Pedidos<span class="count hide" id="navCount"></span></button>
+      <button class="nav" id="tabEst" onclick="aba('est')"><svg class="i"><use href="#i-package"/></svg>Estoque</button>
+    </nav>
+    <div class="side-foot">
+      <div class="live" id="live"><i></i><span id="liveTxt">Conectando…</span></div>
+      <button class="btn sm" onclick="sair()"><svg class="i"><use href="#i-logout"/></svg><span class="lbl">Sair</span></button>
+    </div>
+  </aside>
+
+  <main>
+    <section id="secPed">
+      <div class="page-h">
+        <div><h2>Pedidos</h2><p id="atualizado">—</p></div>
+        <button class="btn" id="btnAtualizar" onclick="atualizarManual(this)"><svg class="i"><use href="#i-refresh"/></svg>Atualizar</button>
+      </div>
+      <div class="kpis" id="kpis"></div>
+      <div class="toolbar">
+        <div class="chips" id="stats"></div>
+        <div class="search"><svg class="i"><use href="#i-search"/></svg><input id="busca" type="search" placeholder="Buscar por código, cliente ou e-mail" aria-label="Buscar pedidos" oninput="renderPedidos()"></div>
+      </div>
+      <div class="orders" id="listaPed"></div>
+    </section>
+
+    <section id="secEst" class="hide">
+      <div class="page-h">
+        <div><h2>Estoque</h2><p>Ajuste as quantidades e salve cada produto.</p></div>
+      </div>
+      <div class="kpis" id="kpisEst" style="grid-template-columns:repeat(3,minmax(0,1fr))"></div>
+      <div class="panel">
+        <table>
+          <thead><tr><th>Produto</th><th>Preço</th><th>Situação</th><th class="r">Quantidade</th><th></th></tr></thead>
+          <tbody id="listaEst"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</div>
+
+<dialog id="dlg">
+  <div class="dlg-b">
+    <h3 id="dlgTitulo"></h3>
+    <p id="dlgTexto"></p>
+    <input id="dlgInput" type="text" class="hide" autocomplete="off">
+  </div>
+  <div class="dlg-f">
+    <button class="btn" id="dlgNo">Voltar</button>
+    <button class="btn primary" id="dlgOk">Confirmar</button>
+  </div>
+</dialog>
+<div id="toasts" aria-live="polite"></div>
+
+<script>
+  const LS = 'powAdminToken';
+  let pedidos = [], produtos = [], filtro = 'todos', rascunho = {};
+  const abertos = new Set();
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const brl = v => 'R$ ' + (+v || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const tok = () => { try { return localStorage.getItem(LS) || ''; } catch (e) { return ''; } };
+  const ico = (n, cls) => `<svg class="i ${cls || ''}"><use href="#i-${n}"/></svg>`;
+
+  function fmtData(s) {
+    const m = /(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2})/.exec(String(s || ''));
+    return m ? `${m[3]}/${m[2]}/${m[1]} às ${m[4]}:${m[5]}` : String(s || '');
+  }
+
+  function toast(m, err) {
+    const t = document.createElement('div');
+    t.className = 'toast' + (err ? ' err' : '');
+    t.innerHTML = ico(err ? 'alert' : 'check') + '<span>' + esc(m) + '</span>';
+    $('toasts').appendChild(t);
+    setTimeout(() => t.remove(), 3600);
+  }
+
+  // ---------- modal (substitui confirm/prompt do navegador) ----------
+  function modal({ titulo, texto, ok = 'Confirmar', perigo = false, campo = null }) {
+    return new Promise(res => {
+      const d = $('dlg'), inp = $('dlgInput'); let out = null;
+      $('dlgTitulo').textContent = titulo; $('dlgTexto').textContent = texto || '';
+      inp.classList.toggle('hide', !campo);
+      if (campo) { inp.value = campo.valor || ''; inp.placeholder = campo.placeholder || ''; }
+      const b = $('dlgOk'); b.textContent = ok; b.className = 'btn ' + (perigo ? 'danger-solid' : 'primary');
+      const fechar = v => { out = v; d.close(); };
+      b.onclick = () => fechar(campo ? inp.value.trim() : true);
+      $('dlgNo').onclick = () => fechar(null);
+      inp.onkeydown = e => { if (e.key === 'Enter') fechar(inp.value.trim()); };
+      d.onclose = () => res(out);
+      d.showModal();
+      if (campo) inp.focus(); else b.focus();
+    });
+  }
+
+  async function api(metodo, caminho, corpo) {
+    const r = await fetch('/api' + caminho, {
+      method: metodo,
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Token': tok() },
+      body: corpo === undefined ? undefined : JSON.stringify(corpo)
+    });
+    let d = {}; try { d = await r.json(); } catch (e) {}
+    if (!r.ok) { const e = new Error(d.erro || ('Erro ' + r.status)); e.status = r.status; throw e; }
+    return d;
+  }
+
+  async function entrar() {
+    const t = $('tokenIn').value.trim(); if (!t) return;
+    try { localStorage.setItem(LS, t); } catch (e) {}
+    try { await carregar(true); $('telaLogin').classList.add('hide'); $('telaApp').classList.remove('hide'); abrirTempoReal(); }
+    catch (e) { toast(e.status === 403 ? 'Token incorreto.' : e.message, true); try { localStorage.removeItem(LS); } catch (x) {} }
+  }
+  function sair() { try { localStorage.removeItem(LS); } catch (e) {} location.reload(); }
+  function aba(n) {
+    $('tabPed').classList.toggle('on', n === 'ped'); $('tabEst').classList.toggle('on', n === 'est');
+    $('secPed').classList.toggle('hide', n !== 'ped'); $('secEst').classList.toggle('hide', n !== 'est');
+  }
+  async function atualizarManual(btn) {
+    btn.disabled = true; btn.classList.add('loading');
+    try { await carregar(); } catch (e) { toast(e.message, true); }
+    btn.disabled = false; btn.classList.remove('loading');
+  }
+
+  // status -> grupo
+  function grupo(st) {
+    const t = (st || '').toLowerCase();
+    if (/cancel|recus|estorn/.test(t)) return 'cancelado';
+    if (/entreg/.test(t)) return 'entregue';
+    if (/envi|transport|rota/.test(t)) return 'enviado';
+    if (/separ|prepar|embal/.test(t)) return 'separando';
+    if (/pago|aprov|confirm/.test(t)) return 'pago';
+    return 'aguardando';
+  }
+  const GRUPOS = [
+    ['todos', 'Todos'], ['aguardando', 'Aguardando pgto'], ['pago', 'Pagos (a separar)'],
+    ['separando', 'Separando'], ['enviado', 'Enviados'], ['entregue', 'Entregues'], ['cancelado', 'Cancelados']
+  ];
+  const ETAPAS = [['aguardando', 'Aguardando pgto'], ['pago', 'Pago'], ['separando', 'Separando'], ['enviado', 'Enviado'], ['entregue', 'Entregue']];
+
+  async function carregar() {
+    const [a, b] = await Promise.all([api('GET', '/admin/pedidos'), api('GET', '/produtos')]);
+    pedidos = a.pedidos || []; produtos = b.produtos || [];
+    $('atualizado').textContent = 'Atualizado às ' + new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    renderKpis(); renderStats(); renderPedidos(); renderEstoque();
+  }
+
+  const nGrupo = k => pedidos.filter(p => grupo(p.status) === k).length;
+
+  function renderKpis() {
+    const validos = pedidos.filter(p => grupo(p.status) !== 'cancelado');
+    const receita = validos.reduce((s, p) => s + (+p.total || 0), 0);
+    const ticket = validos.length ? receita / validos.length : 0;
+    const abertoPg = pedidos.filter(p => grupo(p.status) === 'aguardando');
+    const valorAberto = abertoPg.reduce((s, p) => s + (+p.total || 0), 0);
+    const aSeparar = nGrupo('pago');
+    $('kpis').innerHTML = `
+      <div class="kpi"><div class="l">Receita</div><div class="v">${brl(receita)}</div><div class="s">${validos.length} pedido${validos.length === 1 ? '' : 's'} sem cancelados</div></div>
+      <div class="kpi"><div class="l">Ticket médio</div><div class="v">${brl(ticket)}</div><div class="s">por pedido</div></div>
+      <button class="kpi" onclick="setFiltro('pago')"><div class="l">A separar</div><div class="v">${aSeparar}</div><div class="s">pagos, aguardando separação</div></button>
+      <button class="kpi" onclick="setFiltro('aguardando')"><div class="l">Aguardando pagamento</div><div class="v">${abertoPg.length}</div><div class="s">${brl(valorAberto)} em aberto</div></button>`;
+    const nc = $('navCount'); nc.textContent = aSeparar; nc.classList.toggle('hide', !aSeparar);
+  }
+
+  function renderStats() {
+    $('stats').innerHTML = GRUPOS.map(([k, nome]) => {
+      const n = k === 'todos' ? pedidos.length : nGrupo(k);
+      return `<button class="chip ${k !== 'todos' ? 's-' + k : ''} ${filtro === k ? 'on' : ''} ${n ? '' : 'zero'}" onclick="setFiltro('${k}')">${k !== 'todos' ? '<i></i>' : ''}${nome} <b>${n}</b></button>`;
+    }).join('');
+  }
+  function setFiltro(k) { filtro = k; aba('ped'); renderStats(); renderPedidos(); }
+
+  function acoes(p) {
+    const g = grupo(p.status), c = esc(p.codigo), a = [];
+    if (g === 'aguardando') {
+      a.push(`<button class="btn success" onclick="mudar('${c}','Pagamento aprovado','Marcar como pago?','Confirmar o pagamento do pedido #${c} manualmente.','Marcar como pago')">${ico('check')}Marcar como pago</button>`);
+      a.push(`<button class="btn" onclick="verificar('${c}',this)">${ico('refresh')}Verificar pagamento</button>`);
+    }
+    if (g === 'pago') a.push(`<button class="btn primary" onclick="mudar('${c}','Separando pedido')">${ico('package')}Iniciar separação</button>`);
+    if (g === 'separando') a.push(`<button class="btn primary" onclick="enviar('${c}')">${ico('truck')}Marcar como enviado</button>`);
+    if (g === 'enviado') {
+      a.push(`<button class="btn success" onclick="mudar('${c}','Entregue')">${ico('check')}Marcar como entregue</button>`);
+      a.push(`<button class="btn" onclick="enviar('${c}', true)">Editar rastreio</button>`);
+    }
+    if (g !== 'cancelado') a.push(`<button class="btn" onclick="imprimir('${c}')">${ico('printer')}Imprimir separação</button>`);
+    if (g !== 'cancelado' && g !== 'entregue') a.push(`<span class="gap"></span><button class="btn danger" onclick="mudar('${c}','Cancelado','Cancelar pedido?','O pedido #${c} será cancelado e o estoque devolvido.','Cancelar pedido',true)">${ico('ban')}Cancelar pedido</button>`);
+    return a.join('');
+  }
+
+  function stepper(g) {
+    if (g === 'cancelado') return `<div class="cancelado-msg">${ico('ban')}Este pedido foi cancelado.</div>`;
+    const idx = ETAPAS.findIndex(e => e[0] === g);
+    return `<ol class="steps">${ETAPAS.map(([k, n], i) => `<li class="${i < idx ? 'done' : i === idx ? 'cur' : ''}">${n}</li>`).join('')}</ol>`;
+  }
+
+  function toggle(codigo) { abertos.has(codigo) ? abertos.delete(codigo) : abertos.add(codigo); renderPedidos(); }
+
+  function renderPedidos() {
+    const q = ($('busca').value || '').toLowerCase().trim();
+    const lista = pedidos.filter(p => (filtro === 'todos' || grupo(p.status) === filtro) &&
+      (!q || [p.codigo, p.cliente, p.email].some(x => String(x || '').toLowerCase().includes(q))));
+    if (!lista.length) { $('listaPed').innerHTML = '<div class="empty">Nenhum pedido encontrado.</div>'; return; }
+    $('listaPed').innerHTML = lista.map(p => {
+      const e = p.endereco || {}, g = grupo(p.status), c = esc(p.codigo), aberto = abertos.has(p.codigo);
+      const qtd = (p.itens || []).reduce((s, i) => s + (+i.quantidade || 0), 0);
+      const itens = (p.itens || []).map(i => `<div class="line"><span>${i.quantidade}× ${esc(i.nome)}</span><b>${brl(i.preco * i.quantidade)}</b></div>`).join('');
+      return `<article class="order s-${g} ${aberto ? 'open' : ''} ${g === 'pago' ? 'acao' : ''}">
+        <button class="orow" onclick="toggle('${c}')" aria-expanded="${aberto}">
+          <span class="o-id"><b>#${c}</b><small>${esc(fmtData(p.criado_em))}</small></span>
+          <span class="o-cli"><b>${esc(p.cliente || '')}</b><small>${esc(p.email || '')}</small></span>
+          <span class="o-pay"><b>${esc(p.pagamento || '—')}</b><small>${qtd} ite${qtd === 1 ? 'm' : 'ns'}</small></span>
+          <span class="o-tot">${brl(p.total)}</span>
+          <span class="badge s-${g}">${esc(p.status)}</span>
+          ${ico('chev', 'chev')}
+        </button>
+        <div class="odet">
+          ${stepper(g)}
+          <div class="cols">
+            <div>
+              <div class="blk"><h4>Cliente</h4><p><b>${esc(p.cliente || '')}</b><br>${esc(p.email || '')}${p.telefone ? '<br>' + esc(p.telefone) : ''}</p></div>
+              <div class="blk"><h4>Entrega</h4><p>${esc(e.rua)}, ${esc(e.numero)}${e.complemento ? ' — ' + esc(e.complemento) : ''}<br>${esc(e.cidade)}/${esc(e.estado)} · CEP ${esc(e.cep)}<br><small>${esc(p.frete_nome || '')}</small></p></div>
+              ${p.codigo_rastreio ? `<div class="blk"><h4>Rastreio</h4><p><span class="track">${esc(p.codigo_rastreio)}</span></p></div>` : ''}
+            </div>
+            <div class="blk"><h4>Itens</h4>${itens}
+              <div class="line sub"><span>Frete</span><b>${brl(p.frete)}</b></div>
+              ${p.desconto_pix > 0 ? `<div class="line sub disc"><span>Desconto Pix</span><b>− ${brl(p.desconto_pix)}</b></div>` : ''}
+              ${p.desconto_cupom > 0 ? `<div class="line sub disc"><span>Cupom ${esc(p.cupom || '')}</span><b>− ${brl(p.desconto_cupom)}</b></div>` : ''}
+              <div class="line total"><span>Total</span><b>${brl(p.total)}</b></div>
+            </div>
+          </div>
+          <div class="acts">${acoes(p)}</div>
+        </div>
+      </article>`;
+    }).join('');
+  }
+
+  async function atualizar(codigo, status, rastreio) {
+    const corpo = { status }; if (rastreio !== undefined) corpo.rastreio = rastreio;
+    await api('PUT', '/admin/pedidos/' + encodeURIComponent(codigo), corpo);
+    await carregar();
+  }
+  async function mudar(codigo, status, titulo, texto, rotulo, perigo) {
+    if (titulo && !(await modal({ titulo, texto, ok: rotulo || 'Confirmar', perigo }))) return;
+    try { await atualizar(codigo, status); toast('Pedido #' + codigo + ' → ' + status); } catch (e) { toast(e.message, true); }
+  }
+  async function enviar(codigo, soEditar) {
+    const atual = (pedidos.find(p => p.codigo === codigo) || {}).codigo_rastreio || '';
+    const r = await modal({
+      titulo: soEditar ? 'Editar rastreio' : 'Marcar como enviado',
+      texto: 'Informe o código de rastreio. Você pode deixar vazio e preencher depois.',
+      ok: soEditar ? 'Salvar' : 'Marcar como enviado',
+      campo: { valor: atual, placeholder: 'Ex.: BR123456789BR' }
+    });
+    if (r === null) return;
+    try { await atualizar(codigo, 'Enviado', r); toast(soEditar ? 'Rastreio atualizado.' : 'Pedido marcado como enviado.'); } catch (e) { toast(e.message, true); }
+  }
+  async function verificar(codigo, btn) {
+    btn.disabled = true; btn.classList.add('loading');
+    try {
+      const d = await api('POST', '/admin/pedidos/' + encodeURIComponent(codigo) + '/verificar');
+      toast(grupo(d.status) === 'aguardando' ? 'Ainda sem pagamento aprovado.' : 'Pagamento aprovado!');
+      await carregar();
+    } catch (e) { toast(e.message, true); btn.disabled = false; btn.classList.remove('loading'); }
+  }
+
+  function imprimir(codigo) {
+    const p = pedidos.find(x => x.codigo === codigo); if (!p) return;
+    const e = p.endereco || {};
+    const w = window.open('', '_blank'); if (!w) { toast('Libere pop-ups para imprimir.', true); return; }
+    w.document.write(`<!DOCTYPE html><meta charset="utf-8"><title>Separação ${esc(p.codigo)}</title>
+      <style>body{font-family:Arial,sans-serif;padding:28px;max-width:720px;color:#111}h2{margin:0 0 4px}.m{color:#555;font-size:13px;margin-bottom:18px}
+      table{width:100%;border-collapse:collapse}th,td{border:1px solid #bbb;padding:9px 10px;text-align:left}th{background:#f1f1f1}</style>
+      <body><h2>Separação — #${esc(p.codigo)}</h2><div class="m">${esc(fmtData(p.criado_em))}</div>
+      <p><b>${esc(p.cliente || '')}</b> ${esc(p.telefone || '')}<br>${esc(e.rua)}, ${esc(e.numero)}${e.complemento ? ' — ' + esc(e.complemento) : ''}<br>${esc(e.cidade)}/${esc(e.estado)} — CEP ${esc(e.cep)}<br>Frete: ${esc(p.frete_nome || '')}</p>
+      <table><tr><th width="36">✔</th><th width="60">Qtd</th><th>Produto</th></tr>
+      ${(p.itens || []).map(i => `<tr><td>☐</td><td align="center"><b>${i.quantidade}</b></td><td>${esc(i.nome)}</td></tr>`).join('')}</table>
+      <script>window.onload=()=>window.print()<\/script></body>`);
+    w.document.close();
+  }
+
+  // ---------- estoque ----------
+  const sit = n => n <= 0 ? ['zero', 'Esgotado'] : n <= 5 ? ['baixo', 'Estoque baixo'] : ['ok', 'Em estoque'];
+
+  function renderEstoque() {
+    const esg = produtos.filter(p => p.estoque <= 0).length, baixo = produtos.filter(p => p.estoque > 0 && p.estoque <= 5).length;
+    $('kpisEst').innerHTML = `
+      <div class="kpi"><div class="l">Produtos</div><div class="v">${produtos.length}</div><div class="s">cadastrados</div></div>
+      <div class="kpi"><div class="l">Estoque baixo</div><div class="v">${baixo}</div><div class="s">5 unidades ou menos</div></div>
+      <div class="kpi"><div class="l">Esgotados</div><div class="v">${esg}</div><div class="s">sem unidades</div></div>`;
+    $('listaEst').innerHTML = produtos.map(p => {
+      const [cls, rot] = sit(p.estoque);
+      const val = rascunho[p.id] !== undefined ? rascunho[p.id] : p.estoque;
+      return `<tr>
+        <td><b style="font-weight:600">${esc(p.nome)}</b></td><td>${brl(p.preco)}</td>
+        <td><span class="sit ${cls}">${rot}</span></td>
+        <td class="r"><span class="qty">
+          <button class="btn sm icon" aria-label="Diminuir" onclick="ajustar(${p.id},-1)">${ico('minus')}</button>
+          <input type="number" min="0" id="est${p.id}" value="${esc(val)}" oninput="rascunhar(${p.id})" onkeydown="if(event.key==='Enter')salvarEstoque(${p.id})" aria-label="Quantidade de ${esc(p.nome)}">
+          <button class="btn sm icon" aria-label="Aumentar" onclick="ajustar(${p.id},1)">${ico('plus')}</button></span></td>
+        <td class="r"><button class="btn primary sm" id="sv${p.id}" onclick="salvarEstoque(${p.id})" ${String(val) === String(p.estoque) ? 'disabled' : ''}>Salvar</button></td></tr>`;
+    }).join('');
+  }
+  function rascunhar(id) {
+    const p = produtos.find(x => x.id === id), v = $('est' + id).value;
+    if (String(v) === String(p.estoque)) delete rascunho[id]; else rascunho[id] = v;
+    $('sv' + id).disabled = !(id in rascunho);
+  }
+  function ajustar(id, d) { const i = $('est' + id); i.value = Math.max(0, (parseInt(i.value, 10) || 0) + d); rascunhar(id); }
+  async function salvarEstoque(id) {
+    const v = parseInt($('est' + id).value, 10);
+    if (isNaN(v) || v < 0) { toast('Quantidade inválida.', true); return; }
+    try { await api('PUT', '/admin/estoque/' + id, { estoque: v }); delete rascunho[id]; toast('Estoque atualizado.'); await carregar(); } catch (e) { toast(e.message, true); }
+  }
+
+  // ===== TEMPO REAL =====
+  // O servidor avisa na hora quando entra pedido novo ou um pagamento é aprovado.
+  let streamCtrl = null, recarregando = false;
+  function setLive(on) {
+    $('live').className = 'live ' + (on ? 'on' : 'wait');
+    $('liveTxt').textContent = on ? 'Ao vivo' : 'Reconectando…';
+  }
+  async function abrirTempoReal() {
+    if (streamCtrl) return;
+    const ctrl = new AbortController(); streamCtrl = ctrl;
+    try {
+      const r = await fetch('/api/eventos', { headers: { 'X-Admin-Token': tok() }, signal: ctrl.signal, cache: 'no-store' });
+      if (!r.ok || !r.body) throw new Error('sem stream');
+      setLive(true);
+      const leitor = r.body.getReader(), dec = new TextDecoder();
+      while (true) {
+        const { done, value } = await leitor.read();
+        if (done) break;
+        if (dec.decode(value, { stream: true }).includes('event: pedidos') && !recarregando) {
+          recarregando = true;
+          try { await carregar(); } catch (e) {} finally { recarregando = false; }
+        }
+      }
+    } catch (e) {}
+    setLive(false);
+    if (streamCtrl === ctrl) streamCtrl = null;
+    if (tok() && !$('telaApp').classList.contains('hide')) setTimeout(() => { abrirTempoReal(); carregar().catch(() => {}); }, 3000);
+  }
+
+  // entra automático se já tiver token salvo
+  if (tok()) { $('tokenIn').value = tok(); entrar(); }
+</script>
+</body>
+</html>
