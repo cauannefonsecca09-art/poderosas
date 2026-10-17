@@ -381,6 +381,9 @@
       line-height: 1.3;
       color: var(--text);
     }
+    .price-old { color: var(--gray); text-decoration: line-through; font-weight: 500; font-size: .85em; }
+    .price-new { color: var(--green); }
+    .price-big .price-old { font-size: .6em; }
     .product-price {
       font-size: 1.3rem;
       font-weight: 800;
@@ -1821,17 +1824,17 @@
   const NOTAS = {"1": "4,8", "2": "5,0", "3": "5,0", "4": "5,0", "5": "4,8", "6": "4,7", "7": "5,0", "8": "5,0", "9": "5,0", "10": "5,0", "11": "5,0"};
 
   const produtos = [
-    { id: 1, nome: "Shampoo e Condicionador Poderoso", categoria: "Shampoo", estoque: 3, preco: 137.00, desc: "Com a nossa linha Poderosa, você tem tudo para conquistar o cabelo dos seus sonhos. Além do Tônico Poderoso, agora o shampoo e condicionador Poderoso potencializam os resultados! Formulada com BIOEX, que combate a queda e estimula o crescimento saudável, BIOTINA, essencial para a saúde dos fios, e extrato de cenoura, que hidrata, dá brilho e limpa o couro cabeludo.", g: "g1" },
-    { id: 2, nome: "Shampoo e Condicionador Liso Ético", categoria: "Shampoo", estoque: 3, preco: 139.97, desc: "Shampoo + Condicionador Liso Ético, mais do que limpeza, é preparo. Formulados para fortalecer a fibra capilar, garantindo um liso de longa duração com controle de frizz.", g: "g2" },
-    { id: 3, nome: "Tônico Poderoso - 250ml", categoria: "Tônico", estoque: 3, preco: 149.99, desc: "Tônico capilar para fortalecimento dos fios, desenvolvido para auxiliar na redução da queda e estimular o crescimento saudável do cabelo. Com 92% de eficácia comprovada em testes laboratoriais, o Tônico Poderoso combina Capillenzine, ativos botânicos, vitaminas e aminoácidos que atuam diretamente no couro cabeludo, fortalecendo a raiz e favorecendo o desenvolvimento de fios mais resistentes. Sua textura leve e de rápida absorção permite o uso diário sem pesar os cabelos.", g: "g3", det: { selos: ["🔥 Popular","🐰 Cruelty-Free","🛡️ +92% de eficácia","💧 Uso Diário"], indicado: ["Força e Crescimento","Menos Queda","Cuidado diário"], compat: "Todos os tipos de cabelos.", oferece: [ {i:"🌱", t:"Estimula o crescimento", d:"O complexo Capillenzine age no folículo e favorece fios mais densos."}, {i:"🛡️", t:"Reduz a queda", d:"Fortalece a raiz com +90% de eficácia comprovada em testes laboratoriais."}, {i:"⚡", t:"Prático no dia a dia", d:"Textura leve, rápida absorção, não pesa, sem enxágue."}, {i:"💇", t:"Combina com qualquer cabelo", d:"Como age no couro cabeludo e não na textura do fio, funciona para todos os tipos de cabelos."}, {i:"🐰", t:"Não testado em animais", d:"Nenhum teste em animais em nenhuma etapa."} ] } },
-    { id: 4, nome: "Seiva Finalizadora CachoNut", categoria: "Finalizador", estoque: 1, preco: 77.98, desc: "A Seiva Finalizadora CachoNut é uma aliada versátil para a finalização dos cabelos cacheados. Sua fórmula ajuda a proporcionar definição, controle do frizz, brilho e toque macio, sem comprometer a leveza dos fios. Pode ser utilizada sozinha ou combinada com outros finalizadores para personalizar o resultado, promovendo cachos mais modelados, volumosos e com aparência saudável ao longo do dia.", g: "g4" },
-    { id: 5, nome: "Reparador Babosa & Azeite", categoria: "Tratamento", estoque: 3, preco: 56.90, desc: "Descubra cabelos radiantes e sem frizz com nosso Reparador de Babosa e Azeite de Oliva, que hidrata, sela cutículas e previne pontas duplas, deixando os fios macios, brilhantes e saudáveis.", g: "g5" },
-    { id: 6, nome: "Shampoo e Condicionador Babosa e Azeite", categoria: "Shampoo", estoque: 3, preco: 87.00, desc: "Descubra a magia do Shampoo e Condicionador de Babosa e Azeite de Oliva, uma dupla revolucionária para um cuidado capilar transformador. Com a pureza da Babosa e a riqueza do Azeite de Oliva, nosso Shampoo limpa e ilumina, enquanto o Condicionador nutre, desembaraça e confere uma sedosidade excepcional. Cada uso é uma experiência sensorial, com um aroma maravilhoso que transporta para um jardim de beleza. Transforme seus cabelos em uma obra de arte de maciez, brilho e perfume. Porque você merece um cuidado extraordinário que toca a alma e revela a melhor versão dos seus cabelos.", g: "g6" },
-    { id: 7, nome: "Shampoo e Condy Laranja Poderoso", categoria: "Shampoo", estoque: 3, preco: 149.99, desc: "A dupla de Shampoo e Condicionador Laranja Poderoso foi desenvolvida para promover limpeza, hidratação e nutrição na medida certa, deixando os cabelos mais saudáveis, macios e brilhantes. O shampoo realiza uma limpeza suave e equilibrada, removendo as impurezas sem ressecar os fios, enquanto o condicionador ajuda a selar a umidade, desembaraçar e alinhar a fibra capilar. Juntos, proporcionam cabelos mais leves, sedosos, disciplinados e com brilho natural desde as primeiras aplicações.", g: "g1" },
-    { id: 8, nome: "Mask Poderosa Laranja Power", categoria: "Máscara", estoque: 3, preco: 129.97, desc: "A Mask Laranja Power é uma máscara de tratamento intensivo que hidrata profundamente, restaura a fibra capilar e devolve maciez, força e brilho desde a primeira aplicação. Sua fórmula combina óleos nutritivos, queratina hidrolisada e extratos botânicos para promover cabelos mais saudáveis, sedosos e revitalizados.", g: "g2" },
-    { id: 9, nome: "Shampoo Cremoso Cachonut", categoria: "Shampoo", estoque: 3, preco: 69.98, desc: "O Shampoo Cremoso CachoNut proporciona uma limpeza suave e condicionante para cabelos cacheados, preservando a hidratação natural dos fios. Sua textura cremosa auxilia na remoção das impurezas sem ressecar, deixando os cachos mais macios, nutridos, leves e fáceis de desembaraçar. Ideal para quem busca limpeza delicada, brilho e definição desde a etapa de lavagem.", g: "g3" },
-    { id: 10, nome: "Mask Multifuncional CachoNut", categoria: "Máscara", estoque: 1, preco: 82.91, desc: "A Mask Multifuncional CachoNut foi desenvolvida para nutrir, condicionar e finalizar os fios em uma única etapa. Sua fórmula ajuda a controlar o frizz, promover maciez e intensificar o brilho, deixando os cachos mais alinhados, leves e cheios de movimento. Versátil e prática, pode ser incorporada à rotina de finalização para realçar a beleza natural dos cabelos cacheados.", g: "g4" },
-    { id: 11, nome: "Geleia Modeladora Cachonut", categoria: "Modelador", estoque: 1, preco: 76.98, desc: "Definição, brilho e controle para cachos cheios de vida. A Geleia Modeladora CachoNut foi desenvolvida para finalizar cabelos ondulados, cacheados e crespos, proporcionando definição duradoura sem deixar os fios rígidos ou com aspecto pesado. Sua fórmula ajuda a modelar os cachos, controlar o frizz e preservar o movimento natural dos fios, garantindo um acabamento leve e cheio de personalidade. Versátil, ela pode ser utilizada sozinha ou combinada com a Mask Multifuncional CachoNut para potencializar a definição e a durabilidade da finalização.", g: "g5" },
+    { id: 1, nome: "Shampoo e Condicionador Poderoso", categoria: "Shampoo", estoque: 3, preco: 100.46, de: 137.00, desc: "Com a nossa linha Poderosa, você tem tudo para conquistar o cabelo dos seus sonhos. Além do Tônico Poderoso, agora o shampoo e condicionador Poderoso potencializam os resultados! Formulada com BIOEX, que combate a queda e estimula o crescimento saudável, BIOTINA, essencial para a saúde dos fios, e extrato de cenoura, que hidrata, dá brilho e limpa o couro cabeludo.", g: "g1" },
+    { id: 2, nome: "Shampoo e Condicionador Liso Ético", categoria: "Shampoo", estoque: 3, preco: 102.64, de: 139.97, desc: "Shampoo + Condicionador Liso Ético, mais do que limpeza, é preparo. Formulados para fortalecer a fibra capilar, garantindo um liso de longa duração com controle de frizz.", g: "g2" },
+    { id: 3, nome: "Tônico Poderoso - 250ml", categoria: "Tônico", estoque: 3, preco: 109.99, de: 149.99, desc: "Tônico capilar para fortalecimento dos fios, desenvolvido para auxiliar na redução da queda e estimular o crescimento saudável do cabelo. Com 92% de eficácia comprovada em testes laboratoriais, o Tônico Poderoso combina Capillenzine, ativos botânicos, vitaminas e aminoácidos que atuam diretamente no couro cabeludo, fortalecendo a raiz e favorecendo o desenvolvimento de fios mais resistentes. Sua textura leve e de rápida absorção permite o uso diário sem pesar os cabelos.", g: "g3", det: { selos: ["🔥 Popular","🐰 Cruelty-Free","🛡️ +92% de eficácia","💧 Uso Diário"], indicado: ["Força e Crescimento","Menos Queda","Cuidado diário"], compat: "Todos os tipos de cabelos.", oferece: [ {i:"🌱", t:"Estimula o crescimento", d:"O complexo Capillenzine age no folículo e favorece fios mais densos."}, {i:"🛡️", t:"Reduz a queda", d:"Fortalece a raiz com +90% de eficácia comprovada em testes laboratoriais."}, {i:"⚡", t:"Prático no dia a dia", d:"Textura leve, rápida absorção, não pesa, sem enxágue."}, {i:"💇", t:"Combina com qualquer cabelo", d:"Como age no couro cabeludo e não na textura do fio, funciona para todos os tipos de cabelos."}, {i:"🐰", t:"Não testado em animais", d:"Nenhum teste em animais em nenhuma etapa."} ] } },
+    { id: 4, nome: "Seiva Finalizadora CachoNut", categoria: "Finalizador", estoque: 1, preco: 57.18, de: 77.98, desc: "A Seiva Finalizadora CachoNut é uma aliada versátil para a finalização dos cabelos cacheados. Sua fórmula ajuda a proporcionar definição, controle do frizz, brilho e toque macio, sem comprometer a leveza dos fios. Pode ser utilizada sozinha ou combinada com outros finalizadores para personalizar o resultado, promovendo cachos mais modelados, volumosos e com aparência saudável ao longo do dia.", g: "g4" },
+    { id: 5, nome: "Reparador Babosa & Azeite", categoria: "Tratamento", estoque: 4, preco: 41.73, de: 56.90, desc: "Descubra cabelos radiantes e sem frizz com nosso Reparador de Babosa e Azeite de Oliva, que hidrata, sela cutículas e previne pontas duplas, deixando os fios macios, brilhantes e saudáveis.", g: "g5" },
+    { id: 6, nome: "Shampoo e Condicionador Babosa e Azeite", categoria: "Shampoo", estoque: 5, preco: 63.80, de: 87.00, desc: "Descubra a magia do Shampoo e Condicionador de Babosa e Azeite de Oliva, uma dupla revolucionária para um cuidado capilar transformador. Com a pureza da Babosa e a riqueza do Azeite de Oliva, nosso Shampoo limpa e ilumina, enquanto o Condicionador nutre, desembaraça e confere uma sedosidade excepcional. Cada uso é uma experiência sensorial, com um aroma maravilhoso que transporta para um jardim de beleza. Transforme seus cabelos em uma obra de arte de maciez, brilho e perfume. Porque você merece um cuidado extraordinário que toca a alma e revela a melhor versão dos seus cabelos.", g: "g6" },
+    { id: 7, nome: "Shampoo e Condy Laranja Poderoso", categoria: "Shampoo", estoque: 3, preco: 109.99, de: 149.99, desc: "A dupla de Shampoo e Condicionador Laranja Poderoso foi desenvolvida para promover limpeza, hidratação e nutrição na medida certa, deixando os cabelos mais saudáveis, macios e brilhantes. O shampoo realiza uma limpeza suave e equilibrada, removendo as impurezas sem ressecar os fios, enquanto o condicionador ajuda a selar a umidade, desembaraçar e alinhar a fibra capilar. Juntos, proporcionam cabelos mais leves, sedosos, disciplinados e com brilho natural desde as primeiras aplicações.", g: "g1" },
+    { id: 8, nome: "Mask Poderosa Laranja Power", categoria: "Máscara", estoque: 3, preco: 95.31, de: 129.97, desc: "A Mask Laranja Power é uma máscara de tratamento intensivo que hidrata profundamente, restaura a fibra capilar e devolve maciez, força e brilho desde a primeira aplicação. Sua fórmula combina óleos nutritivos, queratina hidrolisada e extratos botânicos para promover cabelos mais saudáveis, sedosos e revitalizados.", g: "g2" },
+    { id: 9, nome: "Shampoo Hidratante Cachonut", categoria: "Shampoo", estoque: 3, preco: 51.32, de: 69.98, desc: "O Shampoo Hidratante CachoNut proporciona uma limpeza suave e condicionante para cabelos cacheados, preservando a hidratação natural dos fios. Sua textura cremosa auxilia na remoção das impurezas sem ressecar, deixando os cachos mais macios, nutridos, leves e fáceis de desembaraçar. Ideal para quem busca limpeza delicada, brilho e definição desde a etapa de lavagem.", g: "g3" },
+    { id: 10, nome: "Mask Multifuncional CachoNut", categoria: "Máscara", estoque: 1, preco: 60.80, de: 82.91, desc: "A Mask Multifuncional CachoNut foi desenvolvida para nutrir, condicionar e finalizar os fios em uma única etapa. Sua fórmula ajuda a controlar o frizz, promover maciez e intensificar o brilho, deixando os cachos mais alinhados, leves e cheios de movimento. Versátil e prática, pode ser incorporada à rotina de finalização para realçar a beleza natural dos cabelos cacheados.", g: "g4" },
+    { id: 11, nome: "Geleia Modeladora Cachonut", categoria: "Modelador", estoque: 1, preco: 56.45, de: 76.98, desc: "Definição, brilho e controle para cachos cheios de vida. A Geleia Modeladora CachoNut foi desenvolvida para finalizar cabelos ondulados, cacheados e crespos, proporcionando definição duradoura sem deixar os fios rígidos ou com aspecto pesado. Sua fórmula ajuda a modelar os cachos, controlar o frizz e preservar o movimento natural dos fios, garantindo um acabamento leve e cheio de personalidade. Versátil, ela pode ser utilizada sozinha ou combinada com a Mask Multifuncional CachoNut para potencializar a definição e a durabilidade da finalização.", g: "g5" },
   ];
 
   // ========== AUXILIARES VISUAIS ==========
@@ -1872,18 +1875,18 @@
     return PASTAS_IMAGENS[Math.floor(r / EXTS_IMAGENS.length)] + base + '.' + EXTS_IMAGENS[r % EXTS_IMAGENS.length];
   }
   const FOTOS = {
-    1: 'shampoo-condicionador-poderoso.jpg',   // Shampoo e Condicionador Poderoso
-    2: ['shampoo-condicionador-liso-etico.jpg', 'Shampoo%20e%20Condicionador%20Liso%20%C3%89tico.jpg', 'Shampoo%20e%20Condicionador%20Liso%20E%CC%81tico.jpg'],   // Shampoo e Condicionador Liso Ético
+    1: 'shampoo-condicionador-poderoso.jpg',
+    2: 'shampoo-condicionador-liso-etico.jpg',
     3: 'laranja1.jpg',
-    4: 'seiva-cachonut.jpg',   // Seiva Finalizadora CachoNut
-    5: ['reparador-babosa-azeite.jpg', 'Reparador%20Babosa%20Azeite.jpg', 'Reparador-Babosa-Azeite.jpg'],   // Reparador Babosa & Azeite
+    4: 'seiva-cachonut.jpg',
+    5: 'reparador-babosa-azeite.jpg',
     6: 'shampoo-babosa.jpg',
-    7: 'shampoo-condy-laranja.jpg',   // Shampoo e Condy Laranja Poderoso
+    7: 'shampoo-condy-laranja.jpg',
     8: 'laranja.jpg',
-    9: 'shampoo-cremoso-cachonut.jpg',         // Shampoo Cremoso Cachonut
+    9: 'shampoo-hidratante-cachonut.jpg',  // <--- NOME CORRETO AQUI
     10: 'marrom.jpg',
-    11: 'geleia-cachonut.jpg',  // Geleia Modeladora Cachonut
-    49: 'progressiva-everk.jpg'   // Progressiva Everk 500ml
+    11: 'geleia-cachonut.jpg',
+    49: 'progressiva-everk.jpg'
   };
   function bgOf(id) { return FOTOS[id] ? '#fff' : LINHAS[(META[id] || META[1])[0]].bg; }
   function fotoFalhou(img, id) {
@@ -1907,23 +1910,23 @@
     everk:    { a:'#a259e6', b:'#5b0fb5', cap:'#3f0a80', txt:'#5b0fb5', sub:'', nome:'EVERK', bg:'linear-gradient(135deg,#efe3fc,#faf6ff)' },
     extreme:  { a:'#6fd0da', b:'#2a9aa8', cap:'#1c6f7a', txt:'#2a9aa8', sub:'', nome:'EXTREME', bg:'linear-gradient(135deg,#dff5f8,#f5fdff)' }
   });
-  const NOVOS_PRODUTOS = [{"id": 49, "nome": "Progressiva Everk 500ml - Tecnologia Coreana", "categoria": "Progressiva sem formol", "estoque": 3, "preco": 349.0, "desc": "Progressiva Everk 500ml - Tecnologia Coreana — Progressiva sem formol. Produto original da marca Everk Cosméticos.", "g": "g1"}];
+  const NOVOS_PRODUTOS = [{"id": 49, "nome": "Progressiva Everk 500ml - Tecnologia Coreana", "categoria": "Progressiva sem formol", "estoque": 3, "preco": 255.93, "de": 349.0, "desc": "Progressiva Everk 500ml - Tecnologia Coreana — Progressiva sem formol. Produto original da marca Everk Cosméticos.", "g": "g1"}];
   const NOVOS_META = {"49": ["everk", "frasco"]};
   const NOVOS_CAT = {"49": "Progressiva sem formol"};
   const NOVOS_NOTAS = {"49": "4,9"};
   NOVOS_PRODUTOS.forEach(x => produtos.push(x));
   // Estoque Gold Spell: id -> [quantidade, valor unitário]
   const ESTOQUE_GOLD = {
-    9:  [1, 69.98],   // Shampoo Cremoso Cachonut
-    11: [3, 76.98],   // Geleia Modeladora Cachonut
-    10: [1, 82.91],   // Mask Multifuncional CachoNut
-    4:  [3, 77.98],   // Seiva Finalizadora CachoNut
-    2:  [3, 139.97],  // Shampoo e Condicionador Liso Ético
-    3:  [9, 149.99],  // Tônico Poderoso - 250ml
-    49: [2, 349.00],  // Progressiva Everk 500ml - Tecnologia Coreana
-    7:  [6, 149.99],  // Shampoo e Condy Laranja Poderoso
-    8:  [3, 129.97],  // Mask Poderosa Laranja Power
-    1:  [3, 137.00]   // Shampoo e Condicionador Poderoso
+    9:  [1, 51.32],   // Shampoo Hidratante Cachonut
+    11: [3, 56.45],   // Geleia Modeladora Cachonut
+    10: [1, 60.80],   // Mask Multifuncional CachoNut
+    4:  [3, 57.18],   // Seiva Finalizadora CachoNut
+    2:  [3, 102.64],  // Shampoo e Condicionador Liso Ético
+    3:  [4, 109.99],  // Tônico Poderoso - 250ml
+    49: [0, 255.93],  // Progressiva Everk 500ml - Tecnologia Coreana (não apareceu nas fotos)
+    7:  [3, 109.99],  // Shampoo e Condy Laranja Poderoso
+    8:  [2, 95.31],   // Mask Poderosa Laranja Power
+    1:  [3, 100.46]   // Shampoo e Condicionador Poderoso
   };
   produtos.forEach(p => { const e = ESTOQUE_GOLD[p.id]; if (e) { p.estoque = e[0]; p.preco = e[1]; } });
   Object.assign(META, NOVOS_META); Object.assign(CATLABEL, NOVOS_CAT); Object.assign(NOTAS, NOVOS_NOTAS);
@@ -2086,7 +2089,7 @@
           <div class="product-name">${p.nome}</div>
           <div class="product-category">${CATLABEL[p.id] || p.categoria}</div>
           <div class="product-row">
-            <div class="product-price">R$ ${p.preco.toFixed(2).replace('.', ',')}</div>
+            <div class="product-price">${p.de ? `<span class="price-old">R$ ${p.de.toFixed(2).replace('.', ',')}</span> ` : ''}<span class="${p.de ? 'price-new' : ''}">R$ ${p.preco.toFixed(2).replace('.', ',')}</span></div>
             ${notaHtml(p.id)}
           </div>
           <div class="product-parcela">Ou 12x de <b>R$ ${(p.preco*0.118255).toFixed(2).replace('.', ',')}</b> <small>COM JUROS</small></div>
@@ -2145,7 +2148,7 @@
         <div class="product-category">${CATLABEL[p.id] || p.categoria}</div>
         <h1>${p.nome}</h1>
         <div class="stock-tag ${p.estoque <= 1 ? 'low' : ''}">${esgotado ? '❌ Esgotado' : `Em estoque — restam ${p.estoque}`}</div>
-        <div class="price-big">R$ ${p.preco.toFixed(2).replace('.', ',')}</div>
+        <div class="price-big">${p.de ? `<span class="price-old">R$ ${p.de.toFixed(2).replace('.', ',')}</span> ` : ''}<span class="${p.de ? 'price-new' : ''}">R$ ${p.preco.toFixed(2).replace('.', ',')}</span></div>
         <div class="rv-summary" id="rvSummary">${resumoRvHtml(p.id)}</div>
         <div class="desc-wrap"><p class="desc ${longo?'clamp':''}" id="pdDesc">${p.desc}</p>${longo?'<button class="desc-toggle" onclick="toggleDesc(this)">Ver mais</button>':''}</div>
         ${(p.det||det||{}).selos ? `<ul class="selos">${(p.det||det).selos.map(x=>`<li>${x}</li>`).join('')}</ul>` : ''}
@@ -2522,7 +2525,7 @@
           <div class="product-name">${p.nome}</div>
           <div class="product-category">${CATLABEL[p.id] || p.categoria}</div>
           <div class="product-row">
-            <div class="product-price">R$ ${p.preco.toFixed(2).replace('.', ',')}</div>
+            <div class="product-price">${p.de ? `<span class="price-old">R$ ${p.de.toFixed(2).replace('.', ',')}</span> ` : ''}<span class="${p.de ? 'price-new' : ''}">R$ ${p.preco.toFixed(2).replace('.', ',')}</span></div>
             ${notaHtml(p.id)}
           </div>
           <div class="product-parcela">Ou 12x de <b>R$ ${(p.preco*0.118255).toFixed(2).replace('.', ',')}</b> <small>COM JUROS</small></div>
