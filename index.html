@@ -3126,7 +3126,7 @@
 
   // Estoque ao vivo: reflete o que foi alterado no painel sem precisar dar F5.
   async function sincEstoqueVivo() {
-    if (!apiOnline) return;
+    if (location.protocol.indexOf('http') !== 0) return;
     try {
       const d = await api('GET', '/produtos');
       let mudou = false;
@@ -3460,6 +3460,7 @@
     montarFiltros();
     atualizarFavUI();
     rotear();
+    sincEstoqueVivo(); // estoque real do servidor já na abertura, sem depender do resto do carregamento
     if (!(await detectarApi())) { processarRetornoPagamento(); return; }
     if (getToken()) {
       try {
