@@ -2,6 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
+  <script>if (location.protocol.indexOf("http") === 0) document.write('<base href="/">');</script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Poderosa Hair Store | Loja Oficial</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
@@ -2101,7 +2102,33 @@
   }
 
   // ========== PÁGINA PRODUTO ==========
-  function abrirProduto(id) {
+  // ---- URLs de produto: /produtos/nome-do-produto ----
+  const TITULO_LOJA = document.title;
+  function slugBase(n) { return String(n || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/&/g, ' e ').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''); }
+  function slugProduto(p) {
+    const b = slugBase(p.nome);
+    return produtos.some(x => x.id !== p.id && slugBase(x.nome) === b) ? b + '-' + p.id : b;
+  }
+  function abrirProduto(id, semHistorico) {
+    const p = produtos.find(x => x.id === id);
+    if (!p) return;
+    abrirProdutoView(id);
+    const url = '/produtos/' + slugProduto(p);
+    if (!semHistorico && location.protocol.indexOf('http') === 0 && location.pathname !== url) {
+      try { history.pushState({ produto: id }, '', url); } catch (e) {}
+    }
+    document.title = p.nome + ' | Poderosa Hair Store';
+    window.scrollTo(0, 0);
+  }
+  function rotear() {
+    const m = location.pathname.match(/^\/produtos\/([^\/?#]+)/);
+    const p = m && produtos.find(x => slugProduto(x) === decodeURIComponent(m[1]));
+    if (p) abrirProduto(p.id, true);
+    else { voltarLoja(true); if (m) { try { history.replaceState({}, '', '/'); } catch (e) {} } }
+  }
+  window.addEventListener('popstate', rotear);
+
+  function abrirProdutoView(id) {
     const p = produtos.find(x => x.id === id);
     if (!p) return;
     produtoAtual = p;
@@ -2295,9 +2322,13 @@
     document.getElementById('qtdProdutoPage').textContent = qtdProdutoAtual;
   }
 
-  function voltarLoja() {
+  function voltarLoja(semHistorico) {
     document.getElementById('lojaHome').style.display = 'block';
     document.getElementById('productPage').classList.remove('active');
+    document.title = TITULO_LOJA;
+    if (!semHistorico && location.pathname.indexOf('/produtos/') === 0) {
+      try { history.pushState({}, '', '/'); } catch (e) {}
+    }
   }
   function irParaInicio() {
     voltarLoja();
@@ -3093,6 +3124,27 @@
     else if (!logado() && streamCtrl) { streamCtrl.abort(); streamCtrl = null; assinaturaPedidos = null; }
   }, 3000);
 
+  // Estoque ao vivo: reflete o que foi alterado no painel sem precisar dar F5.
+  async function sincEstoqueVivo() {
+    if (!apiOnline) return;
+    try {
+      const d = await api('GET', '/produtos');
+      let mudou = false;
+      d.produtos.forEach(s => {
+        const p = produtos.find(x => x.id === s.id); if (!p) return;
+        const noCarrinho = (carrinho.find(i => i.id === s.id) || {}).quantidade || 0;
+        const novoEst = Math.max(0, s.estoque - noCarrinho);
+        if (p.estoque !== novoEst || p.preco !== s.preco) { p.estoque = novoEst; p.preco = s.preco; mudou = true; }
+      });
+      if (mudou) {
+        renderizarProdutos(); renderizarCarrinho();
+        if (produtoAtual && document.getElementById('productPage').classList.contains('active')) abrirProdutoView(produtoAtual.id);
+      }
+    } catch (e) {}
+  }
+  setInterval(() => { if (!document.hidden) sincEstoqueVivo(); }, 15000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) sincEstoqueVivo(); });
+
   async function acContinuarPagamento(codigo, btn) {
     if (btn) { btn.disabled = true; btn.dataset.txt = btn.textContent; btn.textContent = 'Abrindo pagamento...'; }
     try {
@@ -3407,6 +3459,7 @@
     renderizarCarrinho();
     montarFiltros();
     atualizarFavUI();
+    rotear();
     if (!(await detectarApi())) { processarRetornoPagamento(); return; }
     if (getToken()) {
       try {

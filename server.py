@@ -1493,6 +1493,8 @@ class Handler(BaseHTTPRequestHandler):
         rel = unquote(caminho_url).lstrip("/")
         if rel in ("", "index.html"):
             return self._arquivo(INDEX_FILE)
+        if rel == "produtos" or rel.startswith("produtos/"):
+            return self._arquivo(INDEX_FILE)   # página de produto: /produtos/<nome>
         if rel.rstrip("/") == "admin":
             return self._arquivo(os.path.join(BASE_DIR, "admin.html"))
         alvo = os.path.realpath(os.path.join(BASE_DIR, rel))
