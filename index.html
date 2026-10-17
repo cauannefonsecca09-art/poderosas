@@ -3125,10 +3125,11 @@
   }, 3000);
 
   // Estoque ao vivo: reflete o que foi alterado no painel sem precisar dar F5.
-  async function sincEstoqueVivo() {
-    if (location.protocol.indexOf('http') !== 0) return;
+  async function aplicarEstoqueServidor(limiteMs) {
+    if (location.protocol.indexOf('http') !== 0) return false;
     try {
-      const d = await api('GET', '/produtos');
+      const req = api('GET', '/produtos');
+      const d = limiteMs ? await Promise.race([req, new Promise((_, rej) => setTimeout(rej, limiteMs))]) : await req;
       let mudou = false;
       d.produtos.forEach(s => {
         const p = produtos.find(x => x.id === s.id); if (!p) return;
@@ -3136,11 +3137,14 @@
         const novoEst = Math.max(0, s.estoque - noCarrinho);
         if (p.estoque !== novoEst || p.preco !== s.preco) { p.estoque = novoEst; p.preco = s.preco; mudou = true; }
       });
-      if (mudou) {
-        renderizarProdutos(); renderizarCarrinho();
-        if (produtoAtual && document.getElementById('productPage').classList.contains('active')) abrirProdutoView(produtoAtual.id);
-      }
-    } catch (e) {}
+      return mudou;
+    } catch (e) { return false; }
+  }
+  async function sincEstoqueVivo() {
+    if (await aplicarEstoqueServidor()) {
+      renderizarProdutos(); renderizarCarrinho();
+      if (produtoAtual && document.getElementById('productPage').classList.contains('active')) abrirProdutoView(produtoAtual.id);
+    }
   }
   setInterval(() => { if (!document.hidden) sincEstoqueVivo(); }, 15000);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) sincEstoqueVivo(); });
@@ -3455,12 +3459,12 @@
   // ========== INIT ==========
   async function init() {
     atualizarSaudacao();
+    await aplicarEstoqueServidor(2500); // estoque real ANTES de desenhar (evita piscar o número fixo do arquivo)
     renderizarProdutos();
     renderizarCarrinho();
     montarFiltros();
     atualizarFavUI();
     rotear();
-    sincEstoqueVivo(); // estoque real do servidor já na abertura, sem depender do resto do carregamento
     if (!(await detectarApi())) { processarRetornoPagamento(); return; }
     if (getToken()) {
       try {
@@ -3474,7 +3478,7 @@
     }
     atualizarSaudacao();
     processarRetornoPagamento();
-    sincEstoque();
+    sincEstoqueVivo();
   }
   init();
 </script>
