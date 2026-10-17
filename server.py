@@ -1383,6 +1383,7 @@ def _rotas(c, h, metodo, rota, partes, corpo, token):
             except (TypeError, ValueError):
                 raise ApiErro("Estoque inválido.")
             c.execute("UPDATE produtos SET estoque=? WHERE id=?", (novo, int(partes[2])))
+            notificar(None)
             return 200, {"ok": True}
         if sub == "cupons" and metodo == "GET":
             rows = c.execute("SELECT * FROM cupons").fetchall()
@@ -1400,6 +1401,7 @@ def _rotas(c, h, metodo, rota, partes, corpo, token):
             c.execute("INSERT OR REPLACE INTO cupons(codigo,tipo,valor,minimo,ativo) VALUES(?,?,?,?,?)",
                       (cod, tipo, float(corpo.get("valor", 0)),
                        float(corpo.get("minimo", 0)), 1 if corpo.get("ativo", True) else 0))
+            notificar(None)
             return 201, {"ok": True}
         if sub == "usuarios" and metodo == "GET":
             rows = c.execute("SELECT id,nome,email,criado_em FROM usuarios ORDER BY id DESC").fetchall()
